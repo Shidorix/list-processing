@@ -179,3 +179,11 @@ export async function exportPlaylist(
     `/playlists/${playlistId}/export?${params.toString()}`,
   );
 }
+
+export async function downloadPlaylistAudio(playlistId: string): Promise<void> {
+  window.open(`${API_BASE_URL}/playlists/${playlistId}/download`, "_blank");
+}
+
+export async function downloadTrackAudio(playlistId: string, itemId: string): Promise<void> {
+  window.open(`${API_BASE_URL}/playlists/${playlistId}/items/${itemId}/download`, "_blank");
+}

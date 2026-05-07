@@ -63,6 +63,12 @@ def get_user_session_service() -> UserSessionService:
     return UserSessionService()
 
 
+def get_playlist_download_service():
+    """Create the playlist download service."""
+    from backend.core.download import PlaylistDownloadService
+    return PlaylistDownloadService()
+
+
 def build_track_search_providers(settings: Settings) -> list[TrackSearchProvider]:
     """Build search providers enabled by application settings."""
     providers: list[TrackSearchProvider] = []

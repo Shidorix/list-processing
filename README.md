@@ -23,6 +23,7 @@ CLI-команды для сравнения качества.
 - Manual review: подтверждение или ручное исправление uncertain matches.
 - Analytics endpoint: uncertain count, average score, source counts, algorithm counts.
 - Export playlist в JSON, CSV и M3U.
+- Загрузка аудио: скачивание отдельных MP3-треков или всего плейлиста в ZIP-архиве (через `yt-dlp`).
 - SQLite для локальной разработки, PostgreSQL через Docker Compose.
 - Frontend на React + TypeScript + Vite + Bun.
 
@@ -161,8 +162,10 @@ docker compose down -v
 - `DELETE /playlists/{playlist_id}` - удаление playlist.
 - `PATCH /playlists/{playlist_id}/items/{item_id}` - manual review item.
 - `DELETE /playlists/{playlist_id}/items/{item_id}` - удаление item.
+- `GET /playlists/{playlist_id}/items/{item_id}/download` - скачивание MP3 отдельного трека.
 - `GET /playlists/{playlist_id}/stats` - метрики playlist.
 - `GET /playlists/{playlist_id}/export?format=json|csv|m3u` - export.
+- `GET /playlists/{playlist_id}/download` - скачивание всего плейлиста в ZIP-архиве.
 
 Ответы API используют общий формат:
 
@@ -236,6 +239,9 @@ bun run build
 
 Секреты и локальные файлы не должны попадать в репозиторий: `.env`, SQLite DB,
 `node_modules`, `dist`, cache-файлы и локальные agent-файлы игнорируются.
+
+> [!NOTE]
+> Для работы функции скачивания аудио (через `yt-dlp`) необходимо, чтобы в системе был установлен **FFmpeg** и добавлен в `PATH` (если запускается локально без Docker).
 
 ## Spotify And YouTube Providers
 

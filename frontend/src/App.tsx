@@ -28,6 +28,8 @@ import {
   renamePlaylist,
   reviewPlaylistItem,
   touchSession,
+  downloadPlaylistAudio,
+  downloadTrackAudio,
 } from "./api/client";
 import type {
   HealthResult,
@@ -263,6 +265,16 @@ export function App() {
     }, `Экспорт ${format.toUpperCase()} готов.`);
   }
 
+  function handleDownloadPlaylist() {
+    if (activePlaylist === null) return;
+    downloadPlaylistAudio(activePlaylist.playlist_id);
+  }
+
+  function handleDownloadTrack(itemId: string) {
+    if (activePlaylist === null) return;
+    downloadTrackAudio(activePlaylist.playlist_id, itemId);
+  }
+
   function handleManualTrackIdChange(
     itemId: string,
     event: React.ChangeEvent<HTMLInputElement>,
@@ -435,6 +447,15 @@ export function App() {
                     <Pencil aria-hidden="true" />
                   </button>
                   <button
+                    className="icon-button"
+                    type="button"
+                    title="Скачать весь плейлист (ZIP MP3)"
+                    onClick={handleDownloadPlaylist}
+                    disabled={isLoading}
+                  >
+                    <Download aria-hidden="true" />
+                  </button>
+                  <button
                     className="icon-button danger"
                     type="button"
                     title="Удалить плейлист"
@@ -483,6 +504,17 @@ export function App() {
                       >
                         <Check aria-hidden="true" />
                       </button>
+                      {item.match_external_url && (item.match_external_url.includes("youtube.com") || item.match_external_url.includes("youtu.be")) ? (
+                        <button
+                          className="icon-button"
+                          type="button"
+                          title="Скачать MP3"
+                          onClick={() => handleDownloadTrack(item.item_id)}
+                          disabled={isLoading}
+                        >
+                          <Download aria-hidden="true" />
+                        </button>
+                      ) : null}
                       <button
                         className="icon-button danger"
                         type="button"
@@ -534,6 +566,15 @@ export function App() {
                   {format.toUpperCase()}
                 </button>
               ))}
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={handleDownloadPlaylist}
+                disabled={isLoading || activePlaylist === null}
+              >
+                <Download aria-hidden="true" />
+                Audio (ZIP)
+              </button>
             </div>
 
             {exportResult !== null ? (

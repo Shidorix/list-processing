@@ -5,13 +5,14 @@ from __future__ import annotations
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.api.v1.dependencies import (
     get_parse_and_match_service,
     get_playlist_analytics_service,
+    get_playlist_download_service,
     get_playlist_export_service,
     get_playlist_persistence_service,
 )
@@ -379,4 +380,80 @@ async def delete_playlist_item(
         data=playlist,
         meta=APIMeta(total=playlist.total_items, page=0),
         error=None,
+    )
+
+
+@router.get(
+    "/{playlist_id}/download",
+    summary="Download the entire playlist as a ZIP of MP3s.",
+    description="Uses yt-dlp to download all tracks with YouTube URLs in the playlist.",
+)
+async def download_playlist(
+    playlist_id: UUID,
+    persistence_service: Annotated[
+        PlaylistPersistenceService,
+        Depends(get_playlist_persistence_service),
+    ],
+    download_service: Annotated[
+        "PlaylistDownloadService",
+        Depends(get_playlist_download_service),
+    ],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> Response:
+    """Download entire playlist."""
+    from backend.core.download import DownloadFailedError
+
+    playlist = await persistence_service.get_playlist(session, playlist_id)
+    try:
+        zip_bytes = await download_service.download_playlist_zip(playlist)
+    except DownloadFailedError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return Response(
+        content=zip_bytes,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="playlist-{playlist_id}.zip"'
+        },
+    )
+
+
+@router.get(
+    "/{playlist_id}/items/{item_id}/download",
+    summary="Download a single track as MP3.",
+    description="Uses yt-dlp to download the track's YouTube URL.",
+)
+async def download_track(
+    playlist_id: UUID,
+    item_id: UUID,
+    persistence_service: Annotated[
+        PlaylistPersistenceService,
+        Depends(get_playlist_persistence_service),
+    ],
+    download_service: Annotated[
+        "PlaylistDownloadService",
+        Depends(get_playlist_download_service),
+    ],
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+) -> Response:
+    """Download single track."""
+    from backend.core.download import DownloadFailedError
+
+    playlist = await persistence_service.get_playlist(session, playlist_id)
+    item = next((i for i in playlist.items if i.item_id == item_id), None)
+    if not item:
+        raise HTTPException(status_code=404, detail="Track not found in playlist.")
+
+    try:
+        mp3_bytes, filename = await download_service.download_track(item)
+    except DownloadFailedError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Escape quotes in filename
+    safe_filename = filename.replace('"', '\\"')
+
+    return Response(
+        content=mp3_bytes,
+        media_type="audio/mpeg",
+        headers={"Content-Disposition": f'attachment; filename="{safe_filename}"'},
     )
