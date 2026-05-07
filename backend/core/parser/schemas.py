@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from enum import Enum
 
+from pydantic import BaseModel, ConfigDict, Field
+
 from backend.core.language import DetectedLanguage
 from backend.core.transliterator import TransliterationCandidate
-from pydantic import BaseModel, ConfigDict, Field
 
 
 class TrackPattern(str, Enum):

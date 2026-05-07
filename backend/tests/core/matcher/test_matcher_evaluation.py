@@ -2,17 +2,17 @@ from pathlib import Path
 
 import pytest
 
+from backend.core.catalog import InMemoryTrackCatalog
 from backend.core.matcher.evaluation import (
     MatcherEvaluator,
-    build_matcher_evaluation_summary,
     build_matcher_comparison_summary,
+    build_matcher_evaluation_summary,
     compare_matchers_on_default_dataset,
     evaluate_default_dataset,
     load_labeled_matcher_examples,
     load_track_candidates,
 )
 from backend.core.search import DemoTrackSearchProvider, TrackSearchService
-from backend.core.catalog import InMemoryTrackCatalog
 
 CANDIDATES_PATH = Path("datasets/matcher/candidates.jsonl")
 EXAMPLES_PATH = Path("datasets/matcher/labeled_queries.jsonl")

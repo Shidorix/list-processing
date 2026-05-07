@@ -6,7 +6,7 @@ from backend.crud.playlists import (
     PlaylistItemCreate,
     PlaylistItemReviewUpdate,
 )
-from backend.crud.sessions import UserSessionCRUD, UserSessionCreate
+from backend.crud.sessions import UserSessionCreate, UserSessionCRUD
 
 __all__ = [
     "PlaylistCRUD",

@@ -6,12 +6,6 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.crud import (
-    PlaylistCRUD,
-    PlaylistCreate,
-    PlaylistItemCreate,
-    PlaylistItemReviewUpdate,
-)
 from backend.core.exceptions import AppException
 from backend.core.services.schemas import (
     DeletedResourceResult,
@@ -19,6 +13,12 @@ from backend.core.services.schemas import (
     ParseAndMatchResult,
     PersistedPlaylistItemResult,
     PersistedPlaylistResult,
+)
+from backend.crud import (
+    PlaylistCreate,
+    PlaylistCRUD,
+    PlaylistItemCreate,
+    PlaylistItemReviewUpdate,
 )
 from backend.models import Playlist, PlaylistItem
 

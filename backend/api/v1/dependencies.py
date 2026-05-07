@@ -66,6 +66,7 @@ def get_user_session_service() -> UserSessionService:
 def get_playlist_download_service():
     """Create the playlist download service."""
     from backend.core.download import PlaylistDownloadService
+
     return PlaylistDownloadService()
 
 

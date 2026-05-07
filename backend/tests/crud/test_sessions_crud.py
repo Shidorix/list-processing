@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from backend.crud import UserSessionCRUD, UserSessionCreate
+from backend.crud import UserSessionCreate, UserSessionCRUD
 from backend.database import Base, create_engine
 
 

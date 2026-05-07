@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.core.exceptions import AppException
 from backend.core.services.schemas import UserSessionResult
-from backend.crud import UserSessionCRUD, UserSessionCreate
+from backend.crud import UserSessionCreate, UserSessionCRUD
 from backend.models import UserSession
 
 

@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from backend.crud import PlaylistCRUD, PlaylistCreate, PlaylistItemCreate
+from backend.crud import PlaylistCreate, PlaylistCRUD, PlaylistItemCreate
 from backend.database import Base, create_engine
 
 
